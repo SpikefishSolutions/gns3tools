@@ -20,7 +20,7 @@ for node in lab.nodes:
     inventory = {}
     inventory.update(name=node.name,
                      node_type=node.node_type,
-                     Template=gns3_server.get_template(template_id=node.template_id)['name'],
+                     template=gns3_server.get_template(template_id=node.template_id)['name'],
                      x=node.x,
                      y=node.y,
                     )
