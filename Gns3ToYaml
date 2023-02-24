@@ -1,0 +1,31 @@
+# This will dump the config of a gns3 project's nodes. 
+# Also shows how to get switch configs which can be set via api.
+# Create a project with all nodes and switches as you want 
+# then you can use this to dump their contents in yaml would could then
+# be used with the ansible collection to use anisble to create said project.
+# https://github.com/davidban77/ansible-collection-gns3
+
+import gns3fy
+import yaml
+
+# you may need to pass user (username) and cred (password)  
+gns3_server = gns3fy.Gns3Connector(url="http://x.x.x.x:3080")
+
+lab = gns3fy.Project(name="SomeProject", connector=gns3_server)
+lab.get()
+node_details = {}
+node_details['node_details'] = []
+for node in lab.nodes:
+    # print(node) to see all methods key/values.
+    inventory = {}
+    inventory.update(name=node.name,
+                     node_type=node.node_type,
+                     Template=gns3_server.get_template(template_id=node.template_id)['name'],
+                     x=node.x,
+                     y=node.y,
+                    )
+    if node.properties and node.node_type == 'ethernet_switch':
+        inventory.update(properties=node.properties)
+
+    node_details['node_details'].append(inventory)
+print(yaml.dump(node_details))
